@@ -143,13 +143,4 @@ else:
 # Footer
 st.markdown("---")
 st.markdown("Built with Streamlit and Google Gemini AI")
-```
 
-### **Step 2: Update `requirements.txt`**
-
-Also update `requirements.txt` to use the old library:
-```
-streamlit
-google-generativeai
-PyPDF2
-python-dotenv
