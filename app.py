@@ -146,23 +146,3 @@ else:
 # Footer
 st.markdown("---")
 st.markdown("Built with Streamlit and Google Gemini AI")
-```
-
-### **2.3 Create Environment File:**
-
-Create a file called `.env` in your `ai-pdf-chat` folder:
-```
-GEMINI_API_KEY=your_actual_api_key_here
-```
-
-**Replace** `your_actual_api_key_here` with your real Gemini API key.
-
----
-
-### **Your folder structure should now look like:**
-```
-ai-pdf-chat/
-├── venv/
-├── app.py          # Main application
-├── .env            # API key (don't share this!)
-└── test_api.py     # Old test file (can delete later)
