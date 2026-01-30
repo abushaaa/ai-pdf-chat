@@ -65,7 +65,7 @@ Please provide a helpful, accurate answer based on the PDF content. If the quest
 Answer:"""
         
         response = client.models.generate_content(
-            model='gemini-2.0-flash-exp',
+            model='gemini-1.5-flash',
             contents=prompt
         )
         
@@ -146,3 +146,4 @@ else:
 # Footer
 st.markdown("---")
 st.markdown("Built with Streamlit and Google Gemini AI")
+
