@@ -1,7 +1,6 @@
 import streamlit as st
-from google import genai
+import google.generativeai as genai
 import PyPDF2
-import io
 import os
 from dotenv import load_dotenv
 
@@ -45,8 +44,9 @@ def get_ai_response(user_question, pdf_content):
             st.error("⚠️ API Key not found! Please set GEMINI_API_KEY in your environment.")
             return None
         
-        # Initialize Gemini client
-        client = genai.Client(api_key=api_key)
+        # Configure Gemini
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-1.5-flash')
         
         # Create prompt with context
         prompt = f"""You are a helpful AI assistant. A user has uploaded a PDF document and is asking questions about it.
@@ -64,12 +64,8 @@ Please provide a helpful, accurate answer based on the PDF content. If the quest
 
 Answer:"""
         
-        # Updated API call
-        response = client.models.generate_content(
-            model='gemini-1.5-flash-latest',
-            contents=prompt
-        )
-        
+        # Generate response
+        response = model.generate_content(prompt)
         return response.text
     
     except Exception as e:
@@ -147,5 +143,13 @@ else:
 # Footer
 st.markdown("---")
 st.markdown("Built with Streamlit and Google Gemini AI")
+```
 
+### **Step 2: Update `requirements.txt`**
 
+Also update `requirements.txt` to use the old library:
+```
+streamlit
+google-generativeai
+PyPDF2
+python-dotenv
