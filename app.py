@@ -69,7 +69,7 @@ Answer:"""
                 "Content-Type": "application/json"
             },
             json={
-                "model": "google/gemini-2.0-flash-exp:free",
+                "model": "meta-llama/llama-3.2-3b-instruct:free",
                 "messages": [
                     {"role": "user", "content": prompt}
                 ]
@@ -158,3 +158,4 @@ else:
 # Footer
 st.markdown("---")
 st.markdown("Built with Streamlit and OpenRouter AI")
+
