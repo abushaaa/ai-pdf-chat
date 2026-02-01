@@ -38,9 +38,14 @@ def get_ai_response(user_question, pdf_content):
             st.error("⚠️ API Key not found!")
             return None
         
-        co = cohere.Client(api_key)
+        headers = {
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json'
+        }
         
-        prompt = f"""You are a helpful AI assistant. Answer the user's question based on this PDF content.
+        data = {
+            'model': 'command-r',
+            'message': f"""You are a helpful AI assistant. Answer the user's question based on this PDF content.
 
 PDF Content:
 {pdf_content[:10000]}
@@ -52,24 +57,28 @@ Provide a helpful, accurate answer based on the PDF content. If asked for:
 - Flashcards: Create clear Q&A pairs
 - Related info: Suggest relevant topics from the document
 
-Answer:"""
+Answer:""",
+            'temperature': 0.7,
+            'chat_history': [],
+            'prompt_truncation': 'AUTO'
+        }
         
-        response = co.generate(
-            model='command',
-            prompt=prompt,
-            max_tokens=800,
-            temperature=0.7,
-            k=0,
-            stop_sequences=[],
-            return_likelihoods='NONE'
+        response = requests.post(
+            'https://api.cohere.ai/v1/chat',
+            headers=headers,
+            json=data
         )
         
-        return response.generations[0].text.strip()
+        if response.status_code == 200:
+            result = response.json()
+            return result['text']
+        else:
+            st.error(f"API Error: {response.status_code} - {response.text}")
+            return None
     
     except Exception as e:
         st.error(f"Error: {str(e)}")
         return None
-
 st.title("📚 AI PDF Chat Assistant")
 st.markdown("Upload a PDF and ask questions - get answers, suggestions, and more!")
 
@@ -131,3 +140,4 @@ else:
 
 st.markdown("---")
 st.markdown("Built with Streamlit and Cohere AI")
+
