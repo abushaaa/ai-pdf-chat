@@ -1,8 +1,9 @@
 import streamlit as st
-import google.generativeai as genai
 import PyPDF2
 import os
 from dotenv import load_dotenv
+import requests
+import json
 
 # Load environment variables
 load_dotenv()
@@ -35,18 +36,14 @@ def extract_text_from_pdf(pdf_file):
         return None
 
 def get_ai_response(user_question, pdf_content):
-    """Get response from Gemini AI"""
+    """Get response from OpenRouter AI"""
     try:
         # Get API key from environment variable
-        api_key = os.getenv('GEMINI_API_KEY')
+        api_key = os.getenv('OPENROUTER_API_KEY')
         
         if not api_key:
-            st.error("⚠️ API Key not found! Please set GEMINI_API_KEY in your environment.")
+            st.error("⚠️ API Key not found! Please set OPENROUTER_API_KEY in your environment.")
             return None
-        
-        # Configure Gemini
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('gemini-1.5-flash')
         
         # Create prompt with context
         prompt = f"""You are a helpful AI assistant. A user has uploaded a PDF document and is asking questions about it.
@@ -64,9 +61,27 @@ Please provide a helpful, accurate answer based on the PDF content. If the quest
 
 Answer:"""
         
-        # Generate response
-        response = model.generate_content(prompt)
-        return response.text
+        # Call OpenRouter API
+        response = requests.post(
+            url="https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": "google/gemini-2.0-flash-exp:free",
+                "messages": [
+                    {"role": "user", "content": prompt}
+                ]
+            }
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            return result['choices'][0]['message']['content']
+        else:
+            st.error(f"API Error: {response.status_code} - {response.text}")
+            return None
     
     except Exception as e:
         st.error(f"Error getting AI response: {str(e)}")
@@ -142,5 +157,4 @@ else:
 
 # Footer
 st.markdown("---")
-st.markdown("Built with Streamlit and Google Gemini AI")
-
+st.markdown("Built with Streamlit and OpenRouter AI")
